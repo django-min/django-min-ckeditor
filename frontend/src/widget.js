@@ -5,9 +5,8 @@ import ClassicEditor from './ckeditor.js';
     'use strict';
 
     const selector = '.ckeditor-widget';
-
     const default_toolbar = {
-        viewportTopOffset: 84,
+        // viewportTopOffset: 84,
         items: [
             'clipboard',
             'heading',
@@ -33,6 +32,9 @@ import ClassicEditor from './ckeditor.js';
     function init() {
         // TODO prevent init on inline empty/hidden forms
         const elements = document.querySelectorAll(selector);
+        const hidden = document.querySelectorAll('.empty-form ' + selector);
+        console.log(Array.from(hidden))
+
         if (elements.length > 0) {
             for (let i = 0; i < elements.length; ++i) {
                 init_widget(elements[i])
@@ -71,11 +73,12 @@ import ClassicEditor from './ckeditor.js';
     };
 
     function get_toolbar(element) {
-        // TODO add mechanisme that choose a toolbar from predefined sets
+        // TODO add mechanisme to choose a toolbar from predefined sets
         var toolbar;
         try {
             toolbar = JSON.parse(element.dataset.toolbar);
         } catch (e) {
+            // console.log(e)
         }
         if (!toolbar) {
             toolbar = default_toolbar;

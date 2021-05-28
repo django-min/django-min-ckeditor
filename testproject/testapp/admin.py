@@ -27,6 +27,6 @@ class ItemInline(admin.StackedInline):
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
 
-    exclude = ['parent']
     form = ItemForm
     inlines = [ItemInline]
+    readonly_fields = ['parent']

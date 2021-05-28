@@ -1,3 +1,13 @@
+/*
+TODO this should be customized
+*/
+
+.ckeditor-widget {
+    position: relative;
+    display: inline-block;
+    width: calc(100% - 170px);
+}
+
 .ckeditor-widget .ck.ck-content {
     padding: 1em;
     min-height: 200px;
