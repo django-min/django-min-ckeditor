@@ -71,7 +71,7 @@ import ClassicEditor from './ckeditor.js';
     };
 
     function get_toolbar(element) {
-
+        // TODO add mechanisme that choose a toolbar from predefined sets
         var toolbar;
         try {
             toolbar = JSON.parse(element.dataset.toolbar);
