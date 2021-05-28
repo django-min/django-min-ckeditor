@@ -31,6 +31,7 @@ import ClassicEditor from './ckeditor.js';
     dom_ready(init);
 
     function init() {
+        // TODO prevent init on inline empty/hidden forms
         const elements = document.querySelectorAll(selector);
         if (elements.length > 0) {
             for (let i = 0; i < elements.length; ++i) {
