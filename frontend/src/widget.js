@@ -4,9 +4,11 @@ import ClassicEditor from './ckeditor.js';
 (function () {
     'use strict';
 
-    const selector = '.ckeditor-widget';
+    const widgets_selector = '.ckeditor-widget';
+    const excludes_selector = '.empty-form ' + widgets_selector;
+    const inlines_selector = '.inline-group fieldset';
+
     const default_toolbar = {
-        // viewportTopOffset: 84,
         items: [
             'clipboard',
             'heading',
@@ -30,14 +32,26 @@ import ClassicEditor from './ckeditor.js';
     dom_ready(init);
 
     function init() {
-        // TODO prevent init on inline empty/hidden forms
-        const elements = document.querySelectorAll(selector);
-        const hidden = document.querySelectorAll('.empty-form ' + selector);
-        console.log(Array.from(hidden))
-
+        // select all ckeditor widgets
+        const elements = document.querySelectorAll(widgets_selector);
+        // create array of widgets in inline empty forms
+        const excludes = Array.from(
+            document.querySelectorAll(excludes_selector)
+        );
         if (elements.length > 0) {
             for (let i = 0; i < elements.length; ++i) {
-                init_widget(elements[i])
+                // only init widgets that arn't in a inline empty form
+                if (excludes.indexOf(elements[i]) < 0) {
+                    init_widget(elements[i]);
+                }
+            }
+        }
+
+        // select inlines for observing
+        const inlines = document.querySelectorAll(inlines_selector);
+        if (inlines.length > 0) {
+            for (let i = 0; i < inlines.length; ++i) {
+                init_inline(inlines[i]);
             }
         }
     };
@@ -58,6 +72,7 @@ import ClassicEditor from './ckeditor.js';
 
 
     function get_django_upload(el) {
+
         // get the csrf middleware token
         const csrf_el = document.querySelector('[name="csrfmiddlewaretoken"]');
         const csrf_token = !csrf_el ? '' : csrf_el.value;
@@ -68,11 +83,12 @@ import ClassicEditor from './ckeditor.js';
         // build the conf
         return {
             csrf_token: csrf_token,
-            uploadUrl: upload_url,
+            uploadUrl: upload_url
         };
     };
 
     function get_toolbar(element) {
+
         // TODO add mechanisme to choose a toolbar from predefined sets
         var toolbar;
         try {
@@ -85,6 +101,25 @@ import ClassicEditor from './ckeditor.js';
         }
         return toolbar;
     };
+
+
+    // inlines ----------------------------------------------------------------
+
+    function init_inline(inline) {
+        const observer = new MutationObserver(observe);
+        observer.observe(inline, {
+            childList: true, // observe direct children
+            subtree: false, // and lower descendants too
+            characterDataOldValue: false // pass old data to callback
+        });
+    };
+
+    function observe(record) {
+        console.log(record);
+    };
+
+
+    // Utilities --------------------------------------------------------------
 
     function dom_ready(callback) {
         if (document.readyState != 'loading') {
