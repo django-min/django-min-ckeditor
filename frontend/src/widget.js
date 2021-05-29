@@ -141,7 +141,6 @@ import ClassicEditor from './ckeditor.js';
 
     function observe_inline(mutations, observer) {
         let i, j, mutation, node;
-        console.log(observer)
         for (i = 0; i < mutations.length; i++) {
 
             // bail out if the mutation is something else than a child node
