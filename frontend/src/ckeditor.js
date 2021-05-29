@@ -3,7 +3,6 @@ import ClassicEditorBase from '@ckeditor/ckeditor5-editor-classic/src/classicedi
 
 // Default Plugins
 import Essentials from '@ckeditor/ckeditor5-essentials/src/essentials';
-import UploadAdapter from '@ckeditor/ckeditor5-adapter-ckfinder/src/uploadadapter';
 import Autoformat from '@ckeditor/ckeditor5-autoformat/src/autoformat';
 import Bold from '@ckeditor/ckeditor5-basic-styles/src/bold';
 import Italic from '@ckeditor/ckeditor5-basic-styles/src/italic';
@@ -40,7 +39,7 @@ import TodoList from '@ckeditor/ckeditor5-list/src/todolist';
 import CodeBlock from '@ckeditor/ckeditor5-code-block/src/codeblock';
 
 // Custom File Upload adapter
-import DjangoUploadAdapter from './files/adapter';
+import DjangoUploadAdapter from './uploads/adapter';
 
 
 
