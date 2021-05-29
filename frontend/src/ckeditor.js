@@ -41,6 +41,9 @@ import CodeBlock from '@ckeditor/ckeditor5-code-block/src/codeblock';
 // Custom File Upload adapter
 import DjangoUploadAdapter from './uploads/adapter';
 
+// Custom image plugin
+import DjangoImage from './images/plugin';
+
 
 
 export default class ClassicEditor extends ClassicEditorBase { };
@@ -48,9 +51,11 @@ export default class ClassicEditor extends ClassicEditorBase { };
 
 // Plugins to include in the build.
 ClassicEditor.builtinPlugins = [
+    DjangoUploadAdapter,
+    DjangoImage,
+
     Essentials,
     Clipboard,
-    UploadAdapter,
     CodeBlock,
     Autoformat,
     Bold,
@@ -65,7 +70,6 @@ ClassicEditor.builtinPlugins = [
     ImageToolbar,
     ImageUpload,
     ImageResize,
-    DjangoUploadAdapter,
     Link,
     List,
     Paragraph,
