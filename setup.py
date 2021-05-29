@@ -30,8 +30,8 @@ setup(
         'Development Status :: 3 - Alpha',
     ],
     install_requires=[
-        'django>=3.2',
-        'django-filer=>2.0.2',
+        'django>=3.2,<3.3',
+        'django-filer=>2.0.2,<2.1',
     ],
     packages=find_packages(exclude=[
         'docs'
