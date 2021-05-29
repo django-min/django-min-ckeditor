@@ -6,8 +6,13 @@ import ClassicEditor from './ckeditor.js';
 
     const widgets_selector = '.ckeditor-widget';
     const excludes_selector = '.empty-form ' + widgets_selector;
-    const inlines_selector = '.inline-group fieldset';
-    const inlines_entry_cssclass = 'inline-related';
+
+    const inlines_selector = '.inline-group';
+    const stacked_selector = 'fieldset';
+    const stacked_entry_cssclass = 'inline-related';
+    const tabular_selector = 'tbody';
+    const tabular_entry_cssclass = 'form-row';
+
     const default_toolbar = {
         items: [
             'clipboard',
@@ -45,6 +50,8 @@ import ClassicEditor from './ckeditor.js';
             }
         }
     };
+
+    // widget -----------------------------------------------------------------
 
     function init_widgets(widgets) {
         // create array of widgets in inline empty forms
@@ -93,12 +100,12 @@ import ClassicEditor from './ckeditor.js';
         };
     };
 
-    function get_toolbar(element) {
+    function get_toolbar(el) {
 
         // TODO add mechanisme to choose a toolbar from predefined sets
         var toolbar;
         try {
-            toolbar = JSON.parse(element.dataset.toolbar);
+            toolbar = JSON.parse(el.dataset.toolbar);
         } catch (e) {
             // console.log(e)
         }
@@ -114,33 +121,43 @@ import ClassicEditor from './ckeditor.js';
     // https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver/observe
 
     function init_inline(inline) {
-        const observer = new MutationObserver(observe_inline);
+        let css_class, wrap;
+
+        // create observer object
+        let observer = new MutationObserver(observe_inline);
+
+        // set stacked/tabular selectors/css classes
+        if (inline.dataset.inlineType === 'stacked') {
+            observer._class = stacked_entry_cssclass;
+            wrap = inline.querySelector(stacked_selector);
+        } else {
+            observer._class = tabular_entry_cssclass;
+            wrap = inline.querySelector(tabular_selector);
+        }
 
         // only track direct children changes
-        observer.observe(inline, { childList: true });
+        observer.observe(wrap, { childList: true });
     };
 
-    function observe_inline(mutations, obserser) {
+    function observe_inline(mutations, observer) {
         let i, j, mutation, node;
+        console.log(observer)
         for (i = 0; i < mutations.length; i++) {
-            mutation = mutations[i];
 
             // bail out if the mutation is something else than a child node
-            if (mutation.type != 'childList') {
+            if (mutations[i].type != 'childList') {
                 continue;
             }
 
-            for (j = 0; j < mutation.addedNodes.length; j++) {
-                node = mutation.addedNodes[j];
-
+            for (j = 0; j < mutations[i].addedNodes.length; j++) {
+                node = mutations[i].addedNodes[j];
                 // only init the widgets if the added child is an inline entry
-                if (node.classList.contains(inlines_entry_cssclass)) {
+                if (node.classList.contains(observer._class)) {
                     init_widgets(node.querySelectorAll(widgets_selector));
                 }
             }
         }
     };
-
 
     // Utilities --------------------------------------------------------------
 

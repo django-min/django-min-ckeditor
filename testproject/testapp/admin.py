@@ -3,7 +3,7 @@ from django.contrib import admin
 
 from min_ckeditor.widgets import CKEditorWidget
 
-from .models import Item
+from .models import Item, ItemStacked, ItemTabular
 
 
 class ItemForm(forms.ModelForm):
@@ -12,15 +12,25 @@ class ItemForm(forms.ModelForm):
         fields = '__all__'
         model = Item
         widgets = {
-            # 'abstract': CKEditorWidget,
+            'abstract': forms.Textarea(attrs={
+                'rows': 4,
+                'cols': 12
+            }),
             'description': CKEditorWidget,
         }
 
 
-class ItemInline(admin.StackedInline):
+class ItemStackedInline(admin.StackedInline):
 
     form = ItemForm
-    model = Item
+    model = ItemStacked
+    extra = 0
+
+
+class ItemTabularInline(admin.TabularInline):
+
+    form = ItemForm
+    model = ItemTabular
     extra = 0
 
 
@@ -28,5 +38,7 @@ class ItemInline(admin.StackedInline):
 class ItemAdmin(admin.ModelAdmin):
 
     form = ItemForm
-    inlines = [ItemInline]
-    readonly_fields = ['parent']
+    inlines = [
+        ItemStackedInline,
+        ItemTabularInline,
+    ]
