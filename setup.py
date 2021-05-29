@@ -1,19 +1,20 @@
-import os
+# import os
 import min_ckeditor
 from setuptools import setup, find_packages
 
 
-def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+def readme():
+    with open('README.md') as f:
+        return f.read()
 
 
 setup(
-    name='django-admin-styles',
+    name='django-min-ckeditor',
     version=min_ckeditor.__version__,
     author='Alaric Mägerle',
     author_email='info@rouxcode.ch',
-    description='django min ckeditor',
-    long_description=read('README.md'),
+    description='django-min ckeditor',
+    long_description=readme(),
     url='https://github.com/django-min/django-min-ckeditor',
     license='MIT',
     keywords=['django'],
@@ -33,8 +34,8 @@ setup(
         'django-filer=>2.0.2',
     ],
     packages=find_packages(exclude=[
-        'example',
         'docs'
+        'example',
     ]),
     include_package_data=True,
     zip_safe=False,
