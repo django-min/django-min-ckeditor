@@ -7,7 +7,7 @@ import ClassicEditor from './ckeditor.js';
     const widgets_selector = '.ckeditor-widget';
     const excludes_selector = '.empty-form ' + widgets_selector;
     const inlines_selector = '.inline-group fieldset';
-
+    const inlines_entry_cssclass = 'inline-related';
     const default_toolbar = {
         items: [
             'clipboard',
@@ -32,26 +32,32 @@ import ClassicEditor from './ckeditor.js';
     dom_ready(init);
 
     function init() {
+
         // select all ckeditor widgets
-        const elements = document.querySelectorAll(widgets_selector);
-        // create array of widgets in inline empty forms
-        const excludes = Array.from(
-            document.querySelectorAll(excludes_selector)
-        );
-        if (elements.length > 0) {
-            for (let i = 0; i < elements.length; ++i) {
-                // only init widgets that arn't in a inline empty form
-                if (excludes.indexOf(elements[i]) < 0) {
-                    init_widget(elements[i]);
-                }
-            }
-        }
+        const widgets = document.querySelectorAll(widgets_selector);
+        init_widgets(widgets);
 
         // select inlines for observing
         const inlines = document.querySelectorAll(inlines_selector);
         if (inlines.length > 0) {
             for (let i = 0; i < inlines.length; ++i) {
                 init_inline(inlines[i]);
+            }
+        }
+    };
+
+    function init_widgets(widgets) {
+        // create array of widgets in inline empty forms
+        if (widgets.length < 1) {
+            return
+        }
+        const excludes = Array.from(
+            document.querySelectorAll(excludes_selector)
+        );
+        for (let i = 0; i < widgets.length; ++i) {
+            // only init widgets that arn't in a inline empty form
+            if (excludes.indexOf(widgets[i]) < 0) {
+                init_widget(widgets[i]);
             }
         }
     };
@@ -104,18 +110,35 @@ import ClassicEditor from './ckeditor.js';
 
 
     // inlines ----------------------------------------------------------------
+    // https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
+    // https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver/observe
 
     function init_inline(inline) {
-        const observer = new MutationObserver(observe);
-        observer.observe(inline, {
-            childList: true, // observe direct children
-            subtree: false, // and lower descendants too
-            characterDataOldValue: false // pass old data to callback
-        });
+        const observer = new MutationObserver(observe_inline);
+
+        // only track direct children changes
+        observer.observe(inline, { childList: true });
     };
 
-    function observe(record) {
-        console.log(record);
+    function observe_inline(mutations, obserser) {
+        let i, j, mutation, node;
+        for (i = 0; i < mutations.length; i++) {
+            mutation = mutations[i];
+
+            // bail out if the mutation is something else than a child node
+            if (mutation.type != 'childList') {
+                continue;
+            }
+
+            for (j = 0; j < mutation.addedNodes.length; j++) {
+                node = mutation.addedNodes[j];
+
+                // only init the widgets if the added child is an inline entry
+                if (node.classList.contains(inlines_entry_cssclass)) {
+                    init_widgets(node.querySelectorAll(widgets_selector));
+                }
+            }
+        }
     };
 
 
